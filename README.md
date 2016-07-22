@@ -2,9 +2,33 @@ Docker Image
 ========
 A Docker image for [Armon's hlld server](https://github.com/armon/hlld).
 
+Getting Started
+--------
+```bash
+docker run -d -p 4553:4553 speyside/hlld:v0.5.4
+```
+hlld is now listening on port 4553 on localhost.
+
+Persistent Volumes
+--------
+The hlld docker image mounts the volumes `/etc/hlld` and `/data`. The default configuration can be overwritten by mounting a `/etc/hlld` volume containing a new configuration file. The default configuration file is:
+
+    # hlld defaults
+    [hlld]
+    cold_interval = 0
+    data_dir = /data/hlld
+    log_level = INFO
+    flush_interval = 300
+    port = 4553
+    workers =  2
+
+The data volume can also be mounted. For example:
+```bash
+docker run -d -p 4553:4553 -v <config_dir>:/etc/hlld
+```
 
 hlld
---------
+========
 
 hlld is a high-performance C server which is used
 to expose HyperLogLog sets and operations over them to
@@ -20,8 +44,7 @@ bits all set to the same value is 1/(2^N). There is a lot more in
 the math, but that is the basic intuition. What is even more
 incredible is that the storage required to do the counting
 is log(log(N)). So with a 6 bit register, we can count well into
-the trillions. For more information, its best to read the papers
-referenced at the end.
+the trillions. For more information, please see the original github [repo](https://github.com/armon/hlld).
 
 TL;DR: HyperLogLogs enable you to have a set with about 1.6% variance,
 using 3280 bytes, and estimate sizes in the trillions.
@@ -38,52 +61,6 @@ Features
 * Automatically faults cold sets out of memory to save resources
 * Dead simple to start and administer
 * FAST, FAST, FAST
-
-Install
--------
-
-Download and build from source:
-
-    $ git clone https://armon@github.com/armon/hlld.git
-    $ cd hlld
-    $ pip install SCons  # Uses the Scons build system, may not be necessary
-    $ scons
-    $ ./hlld
-
-This will generate some errors related to building the test code
-as it depends on libcheck. To build the test code successfully,
-do the following:
-
-    $ cd deps/check-0.9.8/
-    $ ./configure
-    $ make
-    # make install
-    # ldconfig (necessary on some Linux distros)
-
-Then re-build hlld. At this point, the test code should build
-successfully.
-
-Usage
------
-
-hlld can be configured using a file which is in INI format.
-Here is an example configuration file:
-
-    # Settings for hlld
-    [hlld]
-    tcp_port = 4553
-    data_dir = /mnt/hlld
-    log_level = INFO
-    flush_interval = 60
-    default_eps = 0.02
-    workers = 2
-
-
-Then run hlld, pointing it to that file:
-
-    hlld -f /etc/hlld.conf
-
-A full list of configuration options is below.
 
 Clients
 ----------
@@ -306,28 +283,3 @@ running on the default port using just telnet::
     > list
     START
     END
-
-
-Performance
------------
-
-Although extensive performance evaluations have not been done,
-casual testing on a 2012 MBP with pure set operations
-allows for a throughput of at least 1MM ops/sec. On Linux,
-response times can be as low as 1 μs.
-
-hlld also supports multi-core systems for scalability, so
-it is important to tune it for the given work load. The number
-of worker threads can be configured either in the configuration
-file, or by providing a `-w` flag. This should be set to at most
-2 * CPU count. By default, only a single worker is used.
-
-
-References
------------
-
-Here are some related works which we make use of:
-
-* HyperLogLog in Practice: Algorithmic Engineering of a State of The Art Cardinality Estimation Algorithm : http://research.google.com/pubs/pub40671.html
-* HyperLogLog: The analysis of a near-optimal cardinality estimation algorithm : http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.142.9475
-

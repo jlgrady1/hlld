@@ -1,0 +1,13 @@
+*.a
+*.dylib
+*.o
+*.os
+.lvimrc
+.sconsign.dblite
+tests/build
+deps/check-0.9.8
+.vagrant
+*.pyc
+test_runner
+hlld
+bench

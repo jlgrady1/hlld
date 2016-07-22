@@ -22,6 +22,7 @@ VOLUME /etc/hlld
 RUN cd /hlld && scons
 RUN mv /hlld/hlld /usr/local/bin/hlld
 RUN rm -rf /hlld
+RUN apk del build-base scons
 
 # Define working directory
 WORKDIR /data

@@ -12,6 +12,7 @@ COPY LICENSE /LICENSE
 COPY SConstruct /hlld/
 COPY src/ /hlld/src
 COPY deps /hlld/deps
+COPY hlld.conf $HLLD_CONFIG
 
 # Definte mountable data and config locations
 VOLUME /data
@@ -19,7 +20,7 @@ VOLUME /etc/hlld
 
 # Build hlld
 RUN cd /hlld && scons
-COPY /hlld/src/hlld /usr/local/bin/hlld
+RUN mv /hlld/hlld /usr/local/bin/hlld
 RUN rm -rf /hlld
 
 # Define working directory

@@ -1,5 +1,10 @@
-hlld [![Build Status](https://travis-ci.org/armon/hlld.png?branch=master)](https://travis-ci.org/armon/hlld)
-=========
+Docker Image
+========
+A Docker image for [Armon's hlld server](https://github.com/armon/hlld).
+
+
+hlld
+--------
 
 hlld is a high-performance C server which is used
 to expose HyperLogLog sets and operations over them to
